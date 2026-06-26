@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgentForge - AI Agent</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;700;800&display=swap" rel="stylesheet">
+    <!-- Highlight.js CSS for Dark Theme -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+</head>
+<body>
+    <div id="particles-js"></div>
+    <div class="app-container">
+        <header class="glass-header">
+            <div class="logo">
+                <img class="logo-icon" src="/static/logo.png" alt="AgentForge 3D Core">
+                <h1>AgentForge</h1>
+            </div>
+            <div class="header-right">
+                <div class="status-indicator">
+                    <span class="status-dot"></span>
+                    <span id="agent-status">Ready</span>
+                </div>
+                <button id="new-chat-btn" class="icon-btn" title="Start New Chat">
+                    <i data-lucide="rotate-ccw"></i>
+                </button>
+            </div>
+        </header>
+
+        <main class="chat-container" id="chat-container">
+            <div class="welcome-message">
+                <h2>Welcome to AgentForge</h2>
+                <p>I am a tool-calling AI agent. I can search the web, execute Python code, and read/write files.</p>
+                <div class="suggestion-chips">
+                    <button class="chip" onclick="setInput('Research the latest advancements in AI agents and write a summary to summary.txt')">Research & Summarize</button>
+                    <button class="chip" onclick="setInput('Run a python script to calculate the first 20 fibonacci numbers')">Execute Code</button>
+                    <button class="chip" onclick="setInput('Induce a tool failure by running invalid python code like `print(1/0)` multiple times')">Test Circuit Breaker</button>
+                </div>
+            </div>
+            <!-- Chat messages will be injected here -->
+        </main>
+
+        <div class="input-area glass-footer">
+            <form id="chat-form">
+                <input type="text" id="user-input" placeholder="Initialize command sequence..." autocomplete="off" required>
+                <button type="submit" id="send-btn">
+                    <i data-lucide="send"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.1/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="/static/app.js"></script>
+</body>
+</html>
