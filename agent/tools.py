@@ -34,6 +34,7 @@ def search(query: str, max_results: int = 5) -> str:
 
 def run_code(code: str) -> str:
     """Execute Python code in a sandboxed subprocess with a timeout."""
+    temp_path = None
     try:
         # Create a temporary file to hold the code
         with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False) as f:
@@ -45,7 +46,7 @@ def run_code(code: str) -> str:
             [sys.executable, temp_path],
             capture_output=True,
             text=True,
-            timeout=5.0,
+            timeout=10.0,
             cwd=WORKSPACE_DIR # Run in the workspace directory
         )
         
@@ -54,17 +55,17 @@ def run_code(code: str) -> str:
 
         output = result.stdout
         if result.stderr:
-            output += f"\nErrors:\n{result.stderr}"
+            output += f"\nStderr:\n{result.stderr}"
         
         if not output.strip():
             return "Code executed successfully with no output."
         return output
     except subprocess.TimeoutExpired:
-        if os.path.exists(temp_path):
+        if temp_path and os.path.exists(temp_path):
             os.remove(temp_path)
-        return "Error: Code execution timed out after 5 seconds."
+        return "Error: Code execution timed out after 10 seconds."
     except Exception as e:
-        if os.path.exists(temp_path):
+        if temp_path and os.path.exists(temp_path):
             os.remove(temp_path)
         return f"Error executing code: {str(e)}"
 

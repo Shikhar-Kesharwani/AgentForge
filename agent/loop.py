@@ -144,22 +144,23 @@ def run_agent_loop(task: str, history: list[dict] = None, max_iterations: int = 
         final_text_accumulator = ""
         
         try:
+            function_responses = []
             for chunk in response_stream:
                 if chunk.function_calls:
                     has_tool_call = True
-                    function_responses = []
                     for function_call in chunk.function_calls:
                         tool_name = function_call.name
                         args = function_call.args
                         
                         yield {"type": "tool_call", "tool": tool_name, "args": args}
                         
-                        # Execute the tool
+                        # Execute the tool — use a boolean flag, NOT string matching
+                        is_error = False
+                        result = ""
                         try:
                             if tool_name in AVAILABLE_TOOLS:
                                 tool_func = AVAILABLE_TOOLS[tool_name]
                                 result = tool_func(**args)
-                                is_error = "Error" in str(result)
                             else:
                                 result = f"Error: Tool '{tool_name}' not found."
                                 is_error = True
@@ -183,22 +184,25 @@ def run_agent_loop(task: str, history: list[dict] = None, max_iterations: int = 
                             consecutive_failures = 0
                             last_failed_tool = None
 
-                        yield {"type": "tool_result", "tool": tool_name, "result": result[:500] + ("..." if len(result) > 500 else "")}
+                        yield {"type": "tool_result", "tool": tool_name, "result": str(result)[:500] + ("..." if len(str(result)) > 500 else "")}
                         
-                        # Accumulate the response
+                        # Accumulate the function response parts
                         function_responses.append(
                             types.Part.from_function_response(
                                 name=tool_name,
-                                response={"result": result}
+                                response={"result": str(result)}
                             )
                         )
-                    
-                    # Set up the response for the next loop iteration with ALL function responses
-                    response_stream = chat.send_message_stream(function_responses)
-                    break # Break the chunk loop since we need to process the next response_stream
+                
                 elif chunk.text:
+                    # Only emit text if this chunk is NOT a function-call chunk
                     final_text_accumulator += chunk.text
                     yield {"type": "final_answer_chunk", "content": chunk.text}
+            
+            if has_tool_call:
+                # Send ALL accumulated function responses in one message
+                response_stream = chat.send_message_stream(function_responses)
+                
         except Exception as e:
             yield {"type": "error", "content": f"API Error during stream: {str(e)}"}
             return

@@ -104,14 +104,20 @@ function removeTyping() {
     }
 }
 
-// Markdown config with highlight.js
-marked.setOptions({
-    highlight: function(code, lang) {
-        const language = hljs.getLanguage(lang) ? lang : 'plaintext';
-        return hljs.highlight(code, { language }).value;
-    },
-    breaks: true
+// Markdown config with highlight.js — marked v12 uses marked.use()
+marked.use({
+    breaks: true,
+    gfm: true
 });
+
+// Override renderer for code blocks to use highlight.js
+const renderer = new marked.Renderer();
+renderer.code = function(code, lang) {
+    const language = (lang && hljs.getLanguage(lang)) ? lang : 'plaintext';
+    const highlighted = hljs.highlight(typeof code === 'object' ? code.text : code, { language }).value;
+    return `<pre><code class="hljs language-${language}">${highlighted}</code></pre>`;
+};
+marked.use({ renderer });
 
 function addMessage(content, type, isStream = false) {
     const div = document.createElement('div');
@@ -216,15 +222,20 @@ chatForm.addEventListener('submit', async (e) => {
         let currentToolId = null;
         let streamingDiv = null;
         let finalAnswerAcc = "";
+        let buffer = ""; // Buffer to handle partial SSE lines across network chunks
 
         while (true) {
             const { done, value } = await reader.read();
             if (done) break;
             
-            const chunk = decoder.decode(value, { stream: true });
-            const lines = chunk.split('\n');
+            buffer += decoder.decode(value, { stream: true });
             
-            for (const line of lines) {
+            // Process all complete lines in the buffer
+            let eolIndex;
+            while ((eolIndex = buffer.indexOf('\n')) >= 0) {
+                const line = buffer.slice(0, eolIndex).trim();
+                buffer = buffer.slice(eolIndex + 1);
+                
                 if (line.startsWith('data: ')) {
                     try {
                         const data = JSON.parse(line.substring(6));
@@ -268,13 +279,13 @@ chatForm.addEventListener('submit', async (e) => {
                         }
                         else if (data.type === 'error') {
                             removeTyping();
-                            addMessage(data.content, 'error-message');
+                            addMessage(`⚠️ ${data.content}`, 'error-message');
                         }
                         else if (data.type === 'status') {
                             setStatus(data.content, 'working');
                         }
                     } catch (e) {
-                        console.error("Error parsing chunk:", e, line);
+                        console.warn("Could not parse SSE line:", line, e);
                     }
                 }
             }
