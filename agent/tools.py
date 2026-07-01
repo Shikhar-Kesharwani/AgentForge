@@ -12,11 +12,13 @@ os.makedirs(WORKSPACE_DIR, exist_ok=True)
 
 def _get_safe_path(filename: str) -> str:
     """Ensure the path is within the workspace."""
-    # Prevent directory traversal
-    base_name = os.path.basename(filename)
-    safe_path = os.path.abspath(os.path.join(WORKSPACE_DIR, base_name))
+    # Prevent directory traversal while allowing subdirectories
+    safe_path = os.path.abspath(os.path.join(WORKSPACE_DIR, filename))
     if not safe_path.startswith(WORKSPACE_DIR):
         raise ValueError("Invalid path: Access denied.")
+    
+    # Ensure parent directories exist
+    os.makedirs(os.path.dirname(safe_path), exist_ok=True)
     return safe_path
 
 def search(query: str, max_results: int = 5) -> str:
@@ -41,13 +43,15 @@ def run_code(code: str) -> str:
             f.write(code)
             temp_path = f.name
 
-        # Run the code using a subprocess with a timeout (e.g., 5 seconds)
+        # Run the code using a subprocess with a timeout (e.g., 10 seconds)
+        # Clear environment variables to mitigate RCE / data exfiltration risks
         result = subprocess.run(
             [sys.executable, temp_path],
             capture_output=True,
             text=True,
             timeout=10.0,
-            cwd=WORKSPACE_DIR # Run in the workspace directory
+            cwd=WORKSPACE_DIR, # Run in the workspace directory
+            env={} # Clear environment variables
         )
         
         # Clean up

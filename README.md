@@ -786,8 +786,6 @@ Distributed under the **MIT License**. See [`LICENSE`](LICENSE) for more informa
 
 **If AgentForge helped you land a role or learn something new, please consider giving it a ⭐**
 
-[![Star History Chart](https://api.star-history.com/svg?repos=AyushGU12/AgentForge&type=Date&theme=dark)](https://star-history.com/#AyushGU12/AgentForge&Date)
-
 <br/>
 
 Made with ❤️ by **AyushGU12** &nbsp;·&nbsp; Powered by **Google Gemini**

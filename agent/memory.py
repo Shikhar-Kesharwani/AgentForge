@@ -12,14 +12,35 @@ client = chromadb.PersistentClient(path=DB_DIR)
 # Get or create a collection for agent memories
 collection = client.get_or_create_collection(name="agent_memory")
 
+import re
+
+def sanitize_text(text: str) -> str:
+    """Basic sanitization to prevent indirect prompt injections in memory."""
+    malicious_patterns = [
+        r"(?i)ignore previous instructions",
+        r"(?i)forget everything",
+        r"(?i)system instruction",
+        r"(?i)you are now",
+        r"(?i)bypass restrictions"
+    ]
+    sanitized = text
+    for pattern in malicious_patterns:
+        sanitized = re.sub(pattern, "[REDACTED]", sanitized)
+    return sanitized
+
 def store_memory(task: str, outcome: str):
     """Store the outcome of a task as a long-term memory."""
     memory_id = str(uuid.uuid4())
-    document = f"Task: {task}\nOutcome: {outcome}"
+    
+    # Sanitize inputs before saving to DB
+    safe_task = sanitize_text(task)
+    safe_outcome = sanitize_text(outcome)
+    
+    document = f"Task: {safe_task}\nOutcome: {safe_outcome}"
     
     collection.add(
         documents=[document],
-        metadatas=[{"task": task}],
+        metadatas=[{"task": safe_task}],
         ids=[memory_id]
     )
     return memory_id

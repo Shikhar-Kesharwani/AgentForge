@@ -1,0 +1,8 @@
+__pycache__/
+*.py[cod]
+*$py.class
+memory_db/
+workspace/
+.env
+AnomalyDetection/
+test_fixes.py

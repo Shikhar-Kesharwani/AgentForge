@@ -110,12 +110,16 @@ marked.use({
     gfm: true
 });
 
-// Override renderer for code blocks to use highlight.js
+// Override renderer for code blocks to use highlight.js and add Copy button
 const renderer = new marked.Renderer();
 renderer.code = function(code, lang) {
     const language = (lang && hljs.getLanguage(lang)) ? lang : 'plaintext';
-    const highlighted = hljs.highlight(typeof code === 'object' ? code.text : code, { language }).value;
-    return `<pre><code class="hljs language-${language}">${highlighted}</code></pre>`;
+    const codeText = typeof code === 'object' ? code.text : code;
+    const highlighted = hljs.highlight(codeText, { language }).value;
+    return `<div class="code-block-wrapper" style="position: relative;">
+        <button class="copy-btn" onclick="navigator.clipboard.writeText(decodeURIComponent('${encodeURIComponent(codeText)}')); this.textContent='Copied!'; setTimeout(()=>this.textContent='Copy', 2000)" style="position: absolute; right: 8px; top: 8px; padding: 4px 8px; background: rgba(255,255,255,0.1); border: none; border-radius: 4px; color: #fff; cursor: pointer; font-size: 12px; z-index: 10;">Copy</button>
+        <pre><code class="hljs language-${language}">${highlighted}</code></pre>
+    </div>`;
 };
 marked.use({ renderer });
 
@@ -151,7 +155,7 @@ function addToolCall(toolName, args) {
     }
 
     div.innerHTML = `
-        <div class="tool-header" onclick="toggleTool('${id}')">
+        <div class="tool-header hover-3d" onclick="toggleTool('${id}')">
             <div class="tool-header-left">
                 <i data-lucide="chevron-down" class="tool-toggle-icon"></i>
                 <span><i data-lucide="wrench" style="width: 16px; height: 16px; margin-right: 4px; vertical-align: middle;"></i>${toolName}</span>
@@ -166,6 +170,13 @@ function addToolCall(toolName, args) {
     
     chatContainer.appendChild(div);
     lucide.createIcons({ root: div });
+    
+    // Initialize VanillaTilt on the new element
+    const toolHeader = div.querySelector('.tool-header');
+    if (window.VanillaTilt) {
+        VanillaTilt.init(toolHeader, { max: 10, speed: 400, glare: true, "max-glare": 0.1 });
+    }
+    
     chatContainer.scrollTop = chatContainer.scrollHeight;
     return id;
 }
@@ -212,7 +223,10 @@ chatForm.addEventListener('submit', async (e) => {
     try {
         const response = await fetch('/chat', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                'X-API-Key': 'default-dev-key'
+            },
             body: JSON.stringify({ message: text, history: chatHistory.slice(0, -1) })
         });
 
@@ -243,6 +257,7 @@ chatForm.addEventListener('submit', async (e) => {
                         if (data.type === 'tool_call') {
                             removeTyping();
                             currentToolId = addToolCall(data.tool, data.args);
+                            chatHistory.push({ role: 'model-function-call', name: data.tool, args: data.args });
                             setStatus(`Running ${data.tool}...`, 'working');
                         } 
                         else if (data.type === 'tool_result') {
@@ -250,6 +265,7 @@ chatForm.addEventListener('submit', async (e) => {
                                 updateToolResult(currentToolId, data.result);
                                 currentToolId = null;
                             }
+                            chatHistory.push({ role: 'user-function-response', name: data.tool, response: { result: data.result } });
                             setStatus('Agent thinking...', 'working');
                             showTyping();
                         }
@@ -300,5 +316,17 @@ chatForm.addEventListener('submit', async (e) => {
         sendBtn.disabled = false;
         setStatus('Ready', '');
         userInput.focus();
+    }
+});
+
+// Initialize VanillaTilt for existing elements on load
+document.addEventListener('DOMContentLoaded', () => {
+    if (window.VanillaTilt) {
+        VanillaTilt.init(document.querySelectorAll(".hover-3d"), {
+            max: 10,
+            speed: 400,
+            glare: true,
+            "max-glare": 0.1
+        });
     }
 });

@@ -3,8 +3,10 @@ import os
 from typing import Generator, Any
 from google import genai
 from google.genai import types
+from google.genai.errors import APIError
 from agent.tools import AVAILABLE_TOOLS
 from agent.memory import retrieve_memories, store_memory
+from tenacity import retry, wait_exponential, stop_after_attempt, retry_if_exception_type
 
 # Gemini tool definitions
 GEMINI_TOOLS = [
@@ -111,10 +113,29 @@ def run_agent_loop(task: str, history: list[dict] = None, max_iterations: int = 
     # Initialize chat history with existing session history
     api_history = []
     for msg in history:
-        # Convert custom roles to gemini roles if needed
-        # Our frontend sends 'user-message' -> 'user', 'agent-message' -> 'model'
-        role = "user" if msg["role"] == "user-message" else "model"
-        api_history.append(types.Content(role=role, parts=[types.Part.from_text(text=msg["content"])]))
+        # Determine the part and role
+        if msg.get("role") == "user-message":
+            role = "user"
+            part = types.Part.from_text(text=msg.get("content", ""))
+        elif msg.get("role") == "agent-message":
+            role = "model"
+            part = types.Part.from_text(text=msg.get("content", ""))
+        elif msg.get("role") == "model-function-call":
+            role = "model"
+            args_dict = msg.get("args") or {}
+            part = types.Part.from_function_call(name=msg.get("name"), args=args_dict)
+        elif msg.get("role") == "user-function-response":
+            role = "user"
+            resp_dict = msg.get("response") or {}
+            part = types.Part.from_function_response(name=msg.get("name"), response=resp_dict)
+        else:
+            continue
+            
+        if api_history and api_history[-1].role == role:
+            # Append part to existing content to maintain strict user/model alternation
+            api_history[-1].parts.append(part)
+        else:
+            api_history.append(types.Content(role=role, parts=[part]))
         
     chat = client.chats.create(
         model="gemini-2.5-flash",
@@ -131,8 +152,17 @@ def run_agent_loop(task: str, history: list[dict] = None, max_iterations: int = 
     
     yield {"type": "status", "content": "Starting agent loop..."}
     
+    # Define a reliable wrapper for sending messages
+    @retry(
+        wait=wait_exponential(multiplier=1, min=2, max=10),
+        stop=stop_after_attempt(4),
+        retry=retry_if_exception_type(APIError)
+    )
+    def reliable_send_stream(message_content):
+        return chat.send_message_stream(message_content)
+
     try:
-        response_stream = chat.send_message_stream(user_message)
+        response_stream = reliable_send_stream(user_message)
     except Exception as e:
         yield {"type": "error", "content": f"API Error: {str(e)}"}
         return
@@ -201,7 +231,7 @@ def run_agent_loop(task: str, history: list[dict] = None, max_iterations: int = 
             
             if has_tool_call:
                 # Send ALL accumulated function responses in one message
-                response_stream = chat.send_message_stream(function_responses)
+                response_stream = reliable_send_stream(function_responses)
                 
         except Exception as e:
             yield {"type": "error", "content": f"API Error during stream: {str(e)}"}

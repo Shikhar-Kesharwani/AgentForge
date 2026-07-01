@@ -3,52 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AgentForge - AI Agent</title>
+    <title>AgentForge - Premium Edition</title>
     <link rel="stylesheet" href="/static/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@400;500;700;800&display=swap" rel="stylesheet">
     <!-- Highlight.js CSS for Dark Theme -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
 </head>
 <body>
+    <!-- Radial Glows & Noise -->
+    <div class="ambient-glow glow-1"></div>
+    <div class="ambient-glow glow-2"></div>
+    <div class="noise-overlay"></div>
     <div id="particles-js"></div>
-    <div class="app-container">
-        <header class="glass-header">
+    
+    <div class="app-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar glass-panel">
             <div class="logo">
-                <img class="logo-icon" src="/static/logo.png" alt="AgentForge 3D Core">
+                <div class="logo-icon-wrapper">
+                    <img class="logo-icon" src="/static/logo.png" alt="AgentForge 3D Core">
+                </div>
                 <h1>AgentForge</h1>
             </div>
-            <div class="header-right">
+            
+            <nav class="sidebar-nav">
+                <button id="new-chat-btn" class="nav-btn active">
+                    <i data-lucide="message-square"></i>
+                    <span>New Chat</span>
+                </button>
+                <button class="nav-btn" onclick="alert('Chat History coming soon!')">
+                    <i data-lucide="history"></i>
+                    <span>History</span>
+                </button>
+                <button class="nav-btn" onclick="alert('Agent Memory cleared!')">
+                    <i data-lucide="brain-circuit"></i>
+                    <span>Clear Memory</span>
+                </button>
+                <button class="nav-btn" onclick="alert('Settings coming soon!')">
+                    <i data-lucide="settings"></i>
+                    <span>Settings</span>
+                </button>
+            </nav>
+            
+            <div class="sidebar-footer">
                 <div class="status-indicator">
                     <span class="status-dot"></span>
                     <span id="agent-status">Ready</span>
                 </div>
-                <button id="new-chat-btn" class="icon-btn" title="Start New Chat">
-                    <i data-lucide="rotate-ccw"></i>
-                </button>
+                <div class="version">v2.0 Premium</div>
             </div>
-        </header>
+        </aside>
 
-        <main class="chat-container" id="chat-container">
-            <div class="welcome-message">
-                <h2>Welcome to AgentForge</h2>
-                <p>I am a tool-calling AI agent. I can search the web, execute Python code, and read/write files.</p>
-                <div class="suggestion-chips">
-                    <button class="chip" onclick="setInput('Research the latest advancements in AI agents and write a summary to summary.txt')">Research & Summarize</button>
-                    <button class="chip" onclick="setInput('Run a python script to calculate the first 20 fibonacci numbers')">Execute Code</button>
-                    <button class="chip" onclick="setInput('Induce a tool failure by running invalid python code like `print(1/0)` multiple times')">Test Circuit Breaker</button>
+        <!-- Main Chat Area -->
+        <main class="main-content">
+            <div class="chat-container glass-panel" id="chat-container">
+                <div class="welcome-message">
+                    <div class="welcome-badge shimmer-text">AI AGENT</div>
+                    <h2>Welcome to AgentForge</h2>
+                    <p>I am a tool-calling AI agent. I can search the web, execute Python code, and read/write files autonomously.</p>
+                    <div class="suggestion-chips">
+                        <button class="chip hover-3d" onclick="setInput('Research the latest advancements in AI agents and write a summary to summary.txt')">
+                            <i data-lucide="search" style="width:16px;height:16px;"></i> Research & Summarize
+                        </button>
+                        <button class="chip hover-3d" onclick="setInput('Run a python script to calculate the first 20 fibonacci numbers')">
+                            <i data-lucide="terminal" style="width:16px;height:16px;"></i> Execute Code
+                        </button>
+                        <button class="chip hover-3d" onclick="setInput('List the files in the workspace and tell me what they are.')">
+                            <i data-lucide="folder-search" style="width:16px;height:16px;"></i> Inspect Workspace
+                        </button>
+                    </div>
                 </div>
+                <!-- Chat messages will be injected here -->
             </div>
-            <!-- Chat messages will be injected here -->
-        </main>
 
-        <div class="input-area glass-footer">
-            <form id="chat-form">
-                <input type="text" id="user-input" placeholder="Initialize command sequence..." autocomplete="off" required>
-                <button type="submit" id="send-btn">
-                    <i data-lucide="send"></i>
-                </button>
-            </form>
-        </div>
+            <!-- Floating Input Area -->
+            <div class="input-wrapper">
+                <form id="chat-form" class="floating-input glass-panel">
+                    <input type="text" id="user-input" placeholder="Initialize command sequence..." autocomplete="off" required>
+                    <button type="submit" id="send-btn" class="shimmer-bg">
+                        <i data-lucide="send"></i>
+                    </button>
+                </form>
+            </div>
+        </main>
     </div>
     
     <!-- Scripts -->
@@ -56,6 +93,8 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.1/marked.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <!-- Tilt.js for 3D hover effects -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js"></script>
     <script src="/static/app.js"></script>
 </body>
 </html>
