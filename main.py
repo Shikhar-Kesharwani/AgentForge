@@ -16,7 +16,18 @@ from agent.loop import run_agent_loop
 
 load_dotenv()
 
+from fastapi.middleware.cors import CORSMiddleware
+
 app = FastAPI(title="AgentForge")
+
+# Setup CORS for decoupled frontend deployment (Vercel etc)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], # In production, restrict this to your Vercel URL
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Initialize Rate Limiter
 limiter = Limiter(key_func=get_remote_address)
@@ -71,4 +82,5 @@ async def chat_endpoint(req_body: ChatRequest, request: Request, api_key: str = 
     return StreamingResponse(event_stream(), media_type="text/event-stream")
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
+    port = int(os.getenv("PORT", 8000))
+    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=False)

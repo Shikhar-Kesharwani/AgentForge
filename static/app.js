@@ -221,7 +221,12 @@ chatForm.addEventListener('submit', async (e) => {
     showTyping();
 
     try {
-        const response = await fetch('/chat', {
+        // Dynamic API Base URL based on where frontend is hosted
+        const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        // In production (Vercel), point to the Render backend. Locally, point to same server.
+        const API_BASE_URL = isLocalhost ? '' : 'https://YOUR_BACKEND_URL.onrender.com';
+        
+        const response = await fetch(`${API_BASE_URL}/chat`, {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',
