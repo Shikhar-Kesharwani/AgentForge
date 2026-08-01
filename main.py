@@ -61,6 +61,14 @@ class ChatRequest(BaseModel):
     message: str
     history: list[ChatMessage] = []
 
+@app.get("/health")
+async def health_check():
+    return {"status": "ok", "app": "AgentForge"}
+
+@app.get("/ready")
+async def readiness_check():
+    return {"status": "ready"}
+
 @app.get("/")
 async def read_index():
     return FileResponse("static/index.html")
