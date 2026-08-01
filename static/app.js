@@ -223,8 +223,8 @@ chatForm.addEventListener('submit', async (e) => {
     try {
         // Dynamic API Base URL based on where frontend is hosted
         const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-        // In production (Vercel), point to the Render backend. Locally, point to same server.
-        const API_BASE_URL = isLocalhost ? '' : 'https://YOUR_BACKEND_URL.onrender.com';
+        // In production (Vercel), point to the Render backend service. Locally, point to same server.
+        const API_BASE_URL = isLocalhost ? '' : (window.RENDER_BACKEND_URL || 'https://agentforge-backend.onrender.com');
         
         const response = await fetch(`${API_BASE_URL}/chat`, {
             method: 'POST',
