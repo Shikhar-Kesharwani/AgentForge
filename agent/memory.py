@@ -9,24 +9,33 @@ PINECONE_INDEX_NAME = os.getenv("PINECONE_INDEX_NAME", "agentforge")
 USE_PINECONE = bool(PINECONE_API_KEY)
 
 if USE_PINECONE:
-    print("☁️  Using Managed Cloud Vector DB (Pinecone)")
-    from pinecone import Pinecone, ServerlessSpec
-    
-    pc = Pinecone(api_key=PINECONE_API_KEY)
-    
-    # Ensure index exists
-    if PINECONE_INDEX_NAME not in pc.list_indexes().names():
-        pc.create_index(
-            name=PINECONE_INDEX_NAME,
-            dimension=1536, # Standard text-embedding-ada-002 or gemini embedding dim
-            metric='cosine',
-            spec=ServerlessSpec(cloud='aws', region='us-east-1')
-        )
-    index = pc.Index(PINECONE_INDEX_NAME)
-    
-    # Note: A real implementation requires generating an embedding vector using the Gemini API.
-    # For this architecture demonstration, we assume store_memory/retrieve_memories will 
-    # generate vectors prior to calling index.upsert() / index.query().
+    print("☁️  Attempting to initialize Managed Cloud Vector DB (Pinecone)...")
+    try:
+        from pinecone import Pinecone, ServerlessSpec
+        
+        pc = Pinecone(api_key=PINECONE_API_KEY)
+        
+        # Check existing indexes safely
+        existing_indexes = [idx.name for idx in pc.list_indexes()] if hasattr(pc.list_indexes(), '__iter__') else pc.list_indexes().names()
+        
+        if PINECONE_INDEX_NAME not in existing_indexes:
+            pc.create_index(
+                name=PINECONE_INDEX_NAME,
+                dimension=1536,
+                metric='cosine',
+                spec=ServerlessSpec(cloud='aws', region='us-east-1')
+            )
+        index = pc.Index(PINECONE_INDEX_NAME)
+        print("✅ Pinecone Vector DB successfully connected!")
+    except Exception as e:
+        print(f"⚠️ Pinecone connection failed: {e}. Falling back to ChromaDB.")
+        USE_PINECONE = False
+        import chromadb
+        DB_DIR = os.path.abspath(os.path.join(os.getcwd(), "memory_db"))
+        os.makedirs(DB_DIR, exist_ok=True)
+        chroma_client = chromadb.PersistentClient(path=DB_DIR)
+        collection = chroma_client.get_or_create_collection(name="agent_memory")
+
     
 else:
     print("🏠 Using Local Standalone Vector DB (ChromaDB)")
