@@ -12,6 +12,9 @@ services:
       - API_KEY=default-dev-key
       - GEMINI_API_KEY=${GEMINI_API_KEY}
       # Leaving DATABASE_URL and PINECONE_API_KEY blank here triggers the local SQLite/ChromaDB fallback
+    env_file: .env
+    networks:
+      - agentforge_net
     volumes:
       # Mount the workspace and memory_db so data persists locally across container restarts
       - ./workspace:/app/workspace
@@ -24,6 +27,13 @@ services:
       dockerfile: frontend.Dockerfile
     ports:
       - "3000:80"
+    env_file: .env
+    networks:
+      - agentforge_net
     depends_on:
       - backend
     restart: unless-stopped
+
+networks:
+  agentforge_net:
+    driver: bridge

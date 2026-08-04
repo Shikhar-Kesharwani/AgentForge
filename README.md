@@ -791,3 +791,8 @@ Distributed under the **MIT License**. See [`LICENSE`](LICENSE) for more informa
 Made with ❤️ by **AyushGU12** &nbsp;·&nbsp; Powered by **Google Gemini**
 
 </div>
+
+
+## Deployment
+- Cloud Run CI/CD configured in `.github/workflows/deploy-cloudrun.yml`.
+- Run `gcloud run deploy` to deploy the backend.
