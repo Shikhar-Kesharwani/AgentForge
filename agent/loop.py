@@ -138,7 +138,7 @@ def run_agent_loop(task: str, history: list[dict] = None, max_iterations: int = 
             api_history.append(types.Content(role=role, parts=[part]))
         
     chat = client.chats.create(
-        model="gemini-2.5-flash",
+        model="gemini-1.5-flash",
         config=config,
         history=api_history
     )
