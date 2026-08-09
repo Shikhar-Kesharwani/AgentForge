@@ -3,6 +3,7 @@
   "routes": [
     {
       "src": "/(.*)",
+      "methods": ["GET", "HEAD", "OPTIONS"],
       "dest": "/static/$1"
     }
   ]
