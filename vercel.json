@@ -1,10 +1,17 @@
 {
-  "version": 2,
-  "routes": [
+  "rewrites": [
     {
-      "src": "/(.*)",
-      "methods": ["GET", "HEAD", "OPTIONS"],
-      "dest": "/static/$1"
+      "source": "/(.*)",
+      "destination": "/static/$1"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET, HEAD, POST, OPTIONS, PUT, DELETE" }
+      ]
     }
   ]
 }
