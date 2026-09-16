@@ -1,26 +1,26 @@
-<div align="center">
+﻿<div align="center">
 
 <!-- Capsule Render Banner -->
 <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=12,20,24&height=200&section=header&text=AgentForge&fontSize=80&fontColor=fff&animation=fadeIn&fontAlignY=38&desc=Production-Grade%20Tool-Calling%20AI%20Agent%20Framework&descAlignY=60&descSize=20" width="100%"/>
 
 <!-- Typing Animation -->
-<a href="https://github.com/AyushGU12/AgentForge">
+<a href="https://github.com/Shikhar-Kesharwani/AgentForge">
   <img src="https://readme-typing-svg.demolab.com?font=Outfit&size=24&duration=3000&pause=800&color=06B6D4&center=true&vCenter=true&multiline=true&width=900&height=100&lines=Build+AI+Agents+that+Think%2C+Act+%26+Remember;Tool-Calling+%7C+Long-Term+Memory+%7C+Failure+Recovery;From+%22used+an+LLM%22+to+%22understands+agent+loops%22" alt="Typing Animation" />
 </a>
 
 <br/>
 
 <!-- Core Badges -->
-[![Stars](https://img.shields.io/github/stars/AyushGU12/AgentForge?style=for-the-badge&logo=starship&color=8b5cf6&labelColor=0d0d0d)](https://github.com/AyushGU12/AgentForge/stargazers)
-[![Forks](https://img.shields.io/github/forks/AyushGU12/AgentForge?style=for-the-badge&logo=git&color=06b6d4&labelColor=0d0d0d)](https://github.com/AyushGU12/AgentForge/network)
-[![Issues](https://img.shields.io/github/issues/AyushGU12/AgentForge?style=for-the-badge&logo=github&color=ef4444&labelColor=0d0d0d)](https://github.com/AyushGU12/AgentForge/issues)
-[![License](https://img.shields.io/github/license/AyushGU12/AgentForge?style=for-the-badge&color=10b981&labelColor=0d0d0d)](LICENSE)
-[![Last Commit](https://img.shields.io/github/last-commit/AyushGU12/AgentForge?style=for-the-badge&color=f59e0b&labelColor=0d0d0d)](https://github.com/AyushGU12/AgentForge/commits)
+[![Stars](https://img.shields.io/github/stars/Shikhar-Kesharwani/AgentForge?style=for-the-badge&logo=starship&color=8b5cf6&labelColor=0d0d0d)](https://github.com/Shikhar-Kesharwani/AgentForge/stargazers)
+[![Forks](https://img.shields.io/github/forks/Shikhar-Kesharwani/AgentForge?style=for-the-badge&logo=git&color=06b6d4&labelColor=0d0d0d)](https://github.com/Shikhar-Kesharwani/AgentForge/network)
+[![Issues](https://img.shields.io/github/issues/Shikhar-Kesharwani/AgentForge?style=for-the-badge&logo=github&color=ef4444&labelColor=0d0d0d)](https://github.com/Shikhar-Kesharwani/AgentForge/issues)
+[![License](https://img.shields.io/github/license/Shikhar-Kesharwani/AgentForge?style=for-the-badge&color=10b981&labelColor=0d0d0d)](LICENSE)
+[![Last Commit](https://img.shields.io/github/last-commit/Shikhar-Kesharwani/AgentForge?style=for-the-badge&color=f59e0b&labelColor=0d0d0d)](https://github.com/Shikhar-Kesharwani/AgentForge/commits)
 
 <br/>
 
 <!-- Visitor Counter -->
-![Visitor Count](https://profile-counter.glitch.me/AyushGU12-AgentForge/count.svg)
+![Visitor Count](https://profile-counter.glitch.me/Shikhar-Kesharwani-AgentForge/count.svg)
 
 </div>
 
@@ -421,7 +421,7 @@ pie title Technology Distribution
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/AyushGU12/AgentForge.git
+git clone https://github.com/Shikhar-Kesharwani/AgentForge.git
 cd AgentForge
 ```
 
@@ -719,7 +719,7 @@ jobs:
 
 ## 🤝 Contributing
 
-Contributions, issues and feature requests are welcome! Feel free to check the [issues page](https://github.com/AyushGU12/AgentForge/issues).
+Contributions, issues and feature requests are welcome! Feel free to check the [issues page](https://github.com/Shikhar-Kesharwani/AgentForge/issues).
 
 <details>
 <summary>Click to expand Contributing Guide</summary>
@@ -769,9 +769,9 @@ Distributed under the **MIT License**. See [`LICENSE`](LICENSE) for more informa
 
 <div align="center">
 
-**Ayush** · [@AyushGU12](https://github.com/AyushGU12)
+**Shikhar Kesharwani** · [@Shikhar-Kesharwani](https://github.com/Shikhar-Kesharwani)
 
-[![GitHub](https://img.shields.io/badge/GitHub-AyushGU12-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/AyushGU12)
+[![GitHub](https://img.shields.io/badge/GitHub-Shikhar-Kesharwani-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Shikhar-Kesharwani)
 
 </div>
 
@@ -788,7 +788,7 @@ Distributed under the **MIT License**. See [`LICENSE`](LICENSE) for more informa
 
 <br/>
 
-Made with ❤️ by **AyushGU12** &nbsp;·&nbsp; Powered by **Google Gemini**
+Made with ❤️ by **Shikhar-Kesharwani** &nbsp;·&nbsp; Powered by **Google Gemini**
 
 </div>
 
